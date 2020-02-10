@@ -26,7 +26,7 @@ def saml(argv=None, prompter=getpass.getpass, client_creator=None,
         help='Your SAML username.'
     )
     parser.add_argument(
-        '-p', '--provider', required=True, choices=['okta', 'adfs'],
+        '-p', '--provider', required=True, choices=['okta', 'adfs', 'keycloak'],
         help=(
             'The name of your SAML provider. Currently okta and adfs '
             'form-based auth is supported.'

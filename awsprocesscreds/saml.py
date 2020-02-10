@@ -262,6 +262,14 @@ class ADFSFormsBasedAuthenticator(GenericFormsBasedAuthenticator):
         return (config.get('saml_authentication_type') == 'form' and
                 config.get('saml_provider') == 'adfs')
 
+class KeycloakAuthenticator(GenericFormsBasedAuthenticator):
+    USERNAME_FIELD = 'username'
+    PASSWORD_FIELD = 'password'
+
+    def is_suitable(self, config):
+        return (config.get('saml_authentication_type') == 'form' and
+                config.get('saml_provider') == 'keycloak')
+
 
 class FormParser(six.moves.html_parser.HTMLParser):
     def __init__(self):
@@ -287,6 +295,8 @@ class FormParser(six.moves.html_parser.HTMLParser):
         # so that the output will be suitable to be fed into an ET later.
         parts = []
         for k, v in d.items():
+            if v == None:
+                v = 'true'
             escaped_value = escape(v)  # pylint: disable=deprecated-method
             parts.append('%s="%s"' % (k, escaped_value))
         return ' '.join(sorted(parts))
@@ -308,8 +318,8 @@ class FormParser(six.moves.html_parser.HTMLParser):
 class SAMLCredentialFetcher(CachedCredentialFetcher):
     SAML_FORM_AUTHENTICATORS = {
         'okta': OktaAuthenticator,
-        'adfs': ADFSFormsBasedAuthenticator
-
+        'adfs': ADFSFormsBasedAuthenticator,
+        'keycloak': KeycloakAuthenticator
     }
 
     def __init__(self, client_creator, provider_name, saml_config,
